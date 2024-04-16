@@ -1,13 +1,28 @@
-<?php $user = [];
+<?php
+
+$host = 'localhost';
+$db   = 'login';
+$user = 'root';
+$pass = '';
+
+$dsn = "mysql:host=$host;dbname=$db";
+
+$options = [
+    PDO::ATTR_ERRMODE            => PDO::ERRMODE_EXCEPTION,
+    PDO::ATTR_DEFAULT_FETCH_MODE => PDO::FETCH_ASSOC,
+    PDO::ATTR_EMULATE_PREPARES   => false,
+];
+
+$pdo = new PDO($dsn, $user, $pass, $options); $user = [];
 
 $user ['username'] = $_POST ['username'] ?? '';
 $user ['password'] = $_POST ['password'] ?? '';
 
 if ($_SERVER ['REQUEST_METHOD'] === 'POST') {
-    $stmt = $pdo->prepare(" 
-        'SELECT * FROM users 
-         WHERE username = :username'
-    ");
+    $stmt = $pdo->prepare("
+    SELECT * FROM login
+    WHERE username = :username
+");
 
      $stmt->execute([
         'username' => $_POST['username'],
@@ -120,6 +135,7 @@ if ($_SERVER ['REQUEST_METHOD'] === 'POST') {
         <input type="password" id="password" name="password" required>
 
         <input type="submit" value="Login">
+        <input type="submit" value="Registrati" style="background-color: #28a745; margin-top: 10px;">
     </form>
 </div>
 

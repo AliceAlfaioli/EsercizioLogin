@@ -1,37 +1,36 @@
 <?php
 
-
-
 $user = [];
 $user['username'] = $_POST['username'] ?? '';
 $user['password'] = $_POST['password'] ?? '';
 
-
-if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-
+if ($_SERVER['REQUEST_METHOD'] === 'POST') {   
     $stmt = $pdo->prepare("
-        INSERT INTO users
-        (username, password)
-        VALUES (:username, :password);
+        SELECT * FROM users
+        WHERE username = :username;
     ");
-    
 
     $stmt->execute([
         'username' => $_POST['username'],
-        
-        'password' => password_hash($_POST['password'], PASSWORD_DEFAULT),
     ]);
 
+    $user_from_db = $stmt->fetch();
+   
+    if ($user_from_db) {
+        if (password_verify($_POST['password'], $user_from_db["password"])) {
+            
+            $_SESSION['user_id'] = $user_from_db['id'];
+            header('Location: http://localhost/SETTIMANA2/EsercizioLogin//index.php');
+         
+        };
+    }
 
-    header('Location: http://localhost/SETTIMANA2/EsercizioLogin/login.php');
-    exit;
+
+    $errors['credentials'] = 'Credenziali non valide';
 }
 
 
 ?>
-
-
-
 
 <!DOCTYPE html>
 <html lang="en">
@@ -129,3 +128,19 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
 </body>
 </html>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
